@@ -1,0 +1,1 @@
+CONN_STRING=sysdba/mysecurepassword@localhost:1521/service_name
