@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: container-registry.oracle.com/database/express:21.3.0-xe
+    container_name: expdb1
+    environment:
+      - ORACLE_PWD=mysecurepassword
+      - ORACLE_CHARACTERSET=AL32UTF8
+    ports:
+      - target: 1521
+        published: 1521
+        mode: host
+      - target: 5500
+        published: 5500
+        mode: host
+    volumes:
+      - type: bind
+        source: /opt/oracle/oradata
+        target: /tmp/oradata
+        bind:
+          create_host_path: true
+      #- expdbvol:/opt/oracle/oradata
+    restart: unless-stopped
+
+  ords:
+    image: container-registry.oracle.com/database/ords:latest
+    container_name: ords
+    ports:
+      - target: 8181
+        published: 8181
+        mode: host
+    links:
+      - db
+    volumes:
+      - ./ords_secrets/:/opt/oracle/variables
+      #- ./ords_config/:/etc/ords/config/
+    restart: unless-stopped
+
+#volumes:
+#  expdbvol:
